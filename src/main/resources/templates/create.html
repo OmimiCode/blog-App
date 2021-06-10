@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" th:href="@{/asset/css/styles/nav.css}">
+    <link rel="stylesheet" th:href="@{/asset/css/styles/footer.css}">
+    <link rel="stylesheet" th:href="@{/asset/css/media-query/footer.css}">
+    <link rel="stylesheet" th:href="@{/asset/css/media-query/nav.css}">
+    <link rel="stylesheet" th:href="@{/asset/css/media-query/style.css}">
+    <link rel="stylesheet" th:href="@{/asset/css/styles/post.css}">
+    <link rel="stylesheet" th:href="@{/asset/css/media-query/post.css}">
+    <link rel="stylesheet" th:href="@{/asset/css/styles/create.css}">
+    <script src="https://kit.fontawesome.com/e2052a1ca7.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <!-- Navigation   -->
+     <nav th:insert="/fragmnets.html::topnav"></nav>
+    <!-- Navigation end   -->
+
+
+     <!--Form-->
+     <form th:action="@{/posts/save}" METHOD="post" th:object="${postDto}" enctype="multipart/form-data">
+        <h2>create a blog post</h2>
+
+         <div class="alert alert-danger col-12" th:if="${error}" role = alert>
+             <span  th:text="${errorMessage}"></span>
+         </div>
+
+        <div class="col-12">
+            <label for="formFile" class="form-label" > Cover Image </label>
+            <input class="form-control" type="file"  th:field="*{imageFile}"name="text" id="formFile" >
+        </div>
+
+         <label for="text"></label>
+         <span  class="form-control is-invalid" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+         <input type="text" id="text" th:field="*{title}" name="text" accept="image/png, image/jpeg" placeholder="enter post">
+
+         <label for="message"></label>
+         <span  class="form-control is-invalid"  th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></span>
+         <textarea name="message" id="message"  th:field="*{content}" cols="30" rows="10" placeholder="Post content here..."></textarea>
+
+        <input type="submit" value="publish post">
+
+    </form> 
+<!-- Form
+  
+        <Footer -->
+        <footer th:insert="/fragmnets.html::footer-fragmenet"></footer>
+        <!-- Footer -->
+
+
+    <!-- Navigation   -->
+    
+
+    <!-- Scripts -->
+
+    <script src="../scripts/app.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+</body>
+
+</html>

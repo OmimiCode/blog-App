@@ -1,21 +1,26 @@
 package com.blogApplication.data.repository;
 
 import com.blogApplication.data.models.Author;
+import com.blogApplication.data.models.Comment;
 import com.blogApplication.data.models.Post;
+import com.blogApplication.web.dto.PostDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 
+import javax.transaction.Transactional;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
+@Transactional
 @Slf4j
 @Sql(scripts = {"classpath:db/insert.sql"})
 class PostRepositoryTest {
@@ -92,6 +97,101 @@ class PostRepositoryTest {
 
     }
 
+
+
+    @Test
+    @Transactional
+    @Rollback(value = false)
+    void deletePostByIdTest(){
+        Post savedPost = postRepository.findById(41).orElse(null);
+        assertThat(savedPost).isNotNull();
+        log.info("post fetch from the database --> {}", savedPost);
+        //delete post
+        postRepository.deleteById(savedPost.getId());
+        //fetch deleted POst
+        Post deletedPost = postRepository.findById(savedPost.getId()).orElse(null);
+        assertThat(deletedPost).isNull();
+
+
+    }
+
+
+
+    @Test
+    @Transactional
+    void updatedSavedPostTest() {
+        Post postToUpdate = postRepository.findById(42).orElse(null);
+        assertThat(postToUpdate).isNotNull();
+        log.info("post fetch from the database --> {}", postToUpdate);
+
+
+
+        postToUpdate.setTitle("new title");
+        postRepository.save(postToUpdate);
+        assertThat(postToUpdate.getTitle()).isEqualTo("new title");
+
+        log.info("post fetch from the database has been updated to --> {}", postToUpdate);
+
+    }
+
+
+    @Test
+    @Transactional
+    void updatePostAuthor(){
+        Post postToUpdate = postRepository.findById(43).orElse(null);
+        assertThat(postToUpdate).isNotNull();
+        assertThat(postToUpdate.getAuthor()).isNull();
+        log.info("post fetch from the database --> {}", postToUpdate);
+
+        Author newAuthor = new Author();
+        newAuthor.setFirstname("brown");
+        newAuthor.setLastname("john");
+        newAuthor.setEmail("jb@mail.com");
+        newAuthor.setPhoneNumber("9739373");
+        newAuthor.setProfession("teacher");
+
+
+        postToUpdate.setAuthor(newAuthor);
+        postRepository.save(postToUpdate);
+
+        assertThat(postToUpdate.getAuthor()).isNotNull();
+        assertThat(postToUpdate.getAuthor().getLastname()).isEqualTo("john");
+
+        log.info("post fetch from the database has been updated to --> {}", postToUpdate);
+
+    }
+
+    @Test
+    @Rollback(value = false)
+    void addCommentTest(){
+        Post postToCommentTo = postRepository.findById(43).orElse(null);
+        assertThat(postToCommentTo).isNotNull();
+        assertThat(postToCommentTo.getComments()).hasSize(0);
+
+
+        Comment comment = new Comment("billy ", "nice post");
+        Comment comment2 = new Comment("james ", "great post");
+
+
+        postToCommentTo.addComment(comment, comment2);
+        postRepository.save(postToCommentTo);
+
+        assertThat(postToCommentTo).isNotNull();
+        assertThat(postToCommentTo.getComments()).hasSize(2);
+        log.info("commented posts -->{}", postToCommentTo);
+
+    }
+
+    @Test
+    @Transactional
+    @Rollback(value = false)
+    void findAllPostInDescendingOrderTest(){
+        List<Post> allPosts = postRepository.findByOrderByDateCreatedDesc();
+        assertTrue(allPosts.get(0).getDateCreated().isAfter(allPosts.get(1).getDateCreated()));
+        allPosts.forEach(post-> {
+            log.info("post Date {}", post.getDateCreated());
+        });
+    }
 
 
 }
