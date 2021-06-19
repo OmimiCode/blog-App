@@ -55,7 +55,7 @@ public class PostController {
             model.addAttribute("errorMessage","title can not be accepted, it exists in our database");
             return "create";
         }
-        return "redirect:/posts";
+        return "redirect:/posts/";
     }
 
     @ModelAttribute
