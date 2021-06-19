@@ -19,27 +19,26 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("/posts")
 public class PostController {
 
     @Autowired
     PostService postServiceImpl;
 
-    @GetMapping("")
+    @GetMapping("/posts")
     public String getIndex(Model model){
         List<Post> postList = postServiceImpl.findPostInDescOrder();
         model.addAttribute("postList", postList);
         return "index";
     }
 
-    @GetMapping("/create")
+    @GetMapping("posts/create")
     public String getPostForm( Model model){
         model.addAttribute("postDto", new PostDto());
         model.addAttribute("error", false);
         return "create";
     }
 
-    @PostMapping("/save")
+    @PostMapping("posts/save")
     public String savePost(@ModelAttribute("postDto") @Valid PostDto postDto, BindingResult bindingResult, Model model){
         log.info("Post Dto received -->{}",postDto);
         if(bindingResult.hasErrors()){
@@ -63,7 +62,7 @@ public class PostController {
         model.addAttribute("postDto", new PostDto());
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "posts/{id}", method = RequestMethod.GET)
     public String getAllPostDetailsById(@PathVariable("id") Integer id, Model model) throws  PostNotFoundException {
         log.info("Invoked method: get with ID--> {} " ,id);
         log.info("Request for a post path --> {}", id);
@@ -72,7 +71,7 @@ public class PostController {
             Post savedPost = postServiceImpl.findById(id);
             model.addAttribute("postInfo", savedPost);
         }catch(PostNotFoundException px){
-            log.info("exception ocuurred");
+            log.info("exception occurred");
         }
         return "post";
     }
