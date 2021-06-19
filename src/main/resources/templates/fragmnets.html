@@ -7,13 +7,13 @@
 <body>
 <nav th:fragment="topnav">
     <div class="logo">
-        <a href="/posts"><h1>BLOGGER</h1></a>
+        <a th:href="@{/posts}"><h1>BLOGGER</h1></a>
         <div class="toggle"><a href=""></a>
             <button><i class="fas fa-bars"></i></button>
         </div>
     </div>
 
-    <ul class="links"><li><a href="/posts">home</a></li><li><a href="/posts/create">post</a></li>
+    <ul class="links"><li><a th:href="@{/posts}">home</a></li><li><a th:href="@{/posts/create}">post</a></li>
     </ul>
 </nav>
 
